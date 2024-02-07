@@ -1,31 +1,33 @@
 {% set name = "parsel" %}
-{% set version = "1.6.0" %}
+{% set version = "1.8.1" %}
 
 package:
   name: {{ name|lower }}
   version: {{ version }}
 
 source:
-  url: https://pypi.io/packages/source/{{ name[0] }}/{{ name }}/parsel-{{ version }}.tar.gz
-  sha256: 70efef0b651a996cceebc69e55a85eb2233be0890959203ba7c3a03c72725c79
+  url: https://pypi.io/packages/source/{{ name[0] }}/{{ name }}/{{ name }}-{{ version }}.tar.gz
+  sha256: aff28e68c9b3f1a901db2a4e3f158d8480a38724d7328ee751c1a4e1c1801e39
 
 build:
   number: 0
-  script: {{ PYTHON }} -m pip install . -vv
+  script: {{ PYTHON }} -m pip install . -vv --no-deps --no-build-isolation
+  skip: True  # [py<37]
 
 requirements:
   host:
     - python
     - pip
-    - pytest-runner
+    - pytest-runner 6.0.0
     - setuptools
     - wheel
   run:
     - python
-    - cssselect >=0.9
-    - functools32  # [py==27]
+    # https://github.com/scrapy/parsel/pull/277
+    - cssselect >=1.2.0
+    - jmespath
     - lxml
-    - six >=1.6.0
+    - packaging
     - w3lib >=1.19.0
 
 test:
