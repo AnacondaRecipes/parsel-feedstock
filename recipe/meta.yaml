@@ -29,7 +29,7 @@ requirements:
     - lxml
     - packaging
     - w3lib >=1.19.0
-    - typing_extensions  # [py<38]
+    - typing-extensions  # [py<38]
 
 test:
   source_files:
