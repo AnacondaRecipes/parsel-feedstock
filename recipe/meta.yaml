@@ -1,17 +1,18 @@
 {% set name = "parsel" %}
-{% set version = "1.6.0" %}
+{% set version = "1.8.1" %}
 
 package:
   name: {{ name|lower }}
   version: {{ version }}
 
 source:
-  url: https://pypi.io/packages/source/{{ name[0] }}/{{ name }}/parsel-{{ version }}.tar.gz
-  sha256: 70efef0b651a996cceebc69e55a85eb2233be0890959203ba7c3a03c72725c79
+  url: https://pypi.io/packages/source/{{ name[0] }}/{{ name }}/{{ name }}-{{ version }}.tar.gz
+  sha256: aff28e68c9b3f1a901db2a4e3f158d8480a38724d7328ee751c1a4e1c1801e39
 
 build:
   number: 0
-  script: {{ PYTHON }} -m pip install . -vv
+  script: {{ PYTHON }} -m pip install . -vv --no-deps --no-build-isolation
+  skip: True  # [py<37]
 
 requirements:
   host:
@@ -22,11 +23,13 @@ requirements:
     - wheel
   run:
     - python
-    - cssselect >=0.9
-    - functools32  # [py==27]
+    # https://github.com/scrapy/parsel/pull/277
+    - cssselect >=1.2.0
+    - jmespath
     - lxml
-    - six >=1.6.0
+    - packaging
     - w3lib >=1.19.0
+    - typing-extensions  # [py<38]
 
 test:
   source_files:
@@ -36,12 +39,11 @@ test:
   requires:
     - pip
     - pytest
+    # https://github.com/giampaolo/psutil/issues/1659#issuecomment-586032229
+    - psutil
   commands:
     - pip check
-    # Tests failed on all platforms. 
-    # Probably due to this constraint https://github.com/scrapy/parsel/blob/f5f73d34ba787ad0c9df25de295de6e196ecd91d/tests/requirements.txt#L1. 
-    # We haven't psutil 5.6.3 on defaults
-    - py.test -v -k "not (test_differences_parsing_xml_vs_html or test_nested_selectors or test_re or test_replacement_null_char_from_body or test_select_on_text_nodes or test_selector_get_alias or test_selector_getall_alias or test_selector_over_text or test_selectorlist_get_alias or test_selectorlist_getall_alias or test_slicing or test_text_pseudo_element)" tests
+    - pytest -v tests
 
 about:
   home: https://github.com/scrapy/parsel
@@ -53,5 +55,4 @@ about:
     Features of parcel are, Extract text using CSS or XPath selectors and
     Regular expression helper methods.
   dev_url: https://github.com/scrapy/parsel
-  doc_url: https://parsel.readthedocs.io/en/latest/
-  doc_source_url: https://github.com/scrapy/parsel/blob/master/docs/index.rst
+  doc_url: https://parsel.readthedocs.io/
