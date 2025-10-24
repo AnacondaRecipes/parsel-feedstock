@@ -37,7 +37,6 @@ test:
   requires:
     - pip
     - pytest
-    # https://github.com/giampaolo/psutil/issues/1659#issuecomment-586032229
     - psutil
   commands:
     - pip check
